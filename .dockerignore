@@ -110,5 +110,3 @@ dist
 .github
 .git
 .env_example
-.gitattributes
-.gitignore
