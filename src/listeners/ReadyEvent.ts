@@ -10,7 +10,7 @@ export class ReadyEvent extends BaseListener {
             activity: { name: this.formatString(this.client.config.presenceData.activities[0]), type: "PLAYING" },
             status: this.client.config.presenceData.status[0]
         }).then(() => {
-            setInterval(async () => {
+            this.client.setInterval(async () => {
                 const status = Math.floor(Math.random() * this.client.config.presenceData.status.length);
                 const activity = Math.floor(Math.random() * this.client.config.presenceData.activities.length);
                 await this.client.user?.setPresence({
