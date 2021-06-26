@@ -29,7 +29,7 @@ export class PingCommand extends BaseCommand {
                 .setFooter(`Requested by: ${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
                 .setTimestamp();
 
-            msg.edit(embed).then(() => msg.edit(" ")).catch(e => this.client.logger.error("PROMISE_ERR:", e));
+            msg.edit("", { embed }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
         }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
         return message;
     }
