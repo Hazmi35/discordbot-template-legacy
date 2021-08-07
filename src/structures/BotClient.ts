@@ -14,7 +14,6 @@ export class BotClient extends Client {
     public readonly logger = createLogger("bot", this.config.isProd);
     public readonly request = got;
     public readonly commands = new CommandManager(this, resolve(__dirname, "..", "commands"));
-    // @ts-expect-error override
     public readonly listeners = new ListenerLoader(this, resolve(__dirname, "..", "listeners"));
 
     public constructor(opt: ClientOptions) { super(opt); }
