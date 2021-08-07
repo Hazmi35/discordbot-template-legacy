@@ -20,6 +20,7 @@ export interface ICommandComponent {
     };
     execute(message: Message, args: string[]): any;
 }
+
 export interface ICategoryMeta {
     name: string;
     hide: boolean;
@@ -34,6 +35,6 @@ declare module "discord.js" {
         commands: BotClient["commands"];
         listeners: BotClient["listeners"];
 
-        public async build(token: string): Promise<BotClient>;
+        public async build(token: string): Promise<this>;
     }
 }

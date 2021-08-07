@@ -18,7 +18,7 @@ export class BotClient extends Client {
 
     public constructor(opt: ClientOptions) { super(opt); }
 
-    public async build(token: string): Promise<BotClient> {
+    public async build(token: string): Promise<this> {
         const start = Date.now();
         this.listeners.load();
         this.on("ready", async () => {
