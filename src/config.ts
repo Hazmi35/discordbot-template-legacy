@@ -1,4 +1,4 @@
-import { ClientOptions, ClientPresenceStatus, Intents, UserResolvable } from "discord.js";
+import { ClientOptions, ClientPresenceStatus, Collection, Intents, UserResolvable } from "discord.js";
 
 export const defaultPrefix = "$";
 export const devs: UserResolvable[] = ["290159952784392202"]; // NOTE: Please change this
@@ -6,7 +6,8 @@ export const clientOptions: ClientOptions = {  // https://discord.js.org/#/docs/
     allowedMentions: { parse: ["users"] },
     restTimeOffset: 300,
     retryLimit: 3,
-    intents: [Intents.FLAGS.GUILD_MESSAGES] // NOTE: Please use Intents that you will only need
+    makeCache: () => new Collection(),
+    intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS] // NOTE: Please use Intents that you will only need
 };
 export const isProd = process.env.NODE_ENV === "production";
 export const isDev = !isProd;
