@@ -3,17 +3,17 @@ import { IMessage } from "../typings";
 import { DefineListener } from "../utils/decorators/DefineListener";
 import { BaseListener } from "../structures/BaseListener";
 
-@DefineListener("message")
-export class MessageEvent extends BaseListener {
+@DefineListener("messageCreate")
+export class MessageCreateEvent extends BaseListener {
     public async execute(message: IMessage): Promise<any> {
-        if (message.author.bot || message.channel.type === "dm") return message;
+        if (message.author.bot || message.channel.type === "DM") return message;
 
         if (message.content.startsWith(this.client.config.prefix)) return this.client.commands.handle(message);
 
         if ((await this.getUserFromMention(message.content))?.id === this.client.user?.id) {
             message.channel.send(
                 new MessageEmbed()
-                    .setAuthor(this.client.user?.username, this.client.user?.displayAvatarURL())
+                    .setAuthor(this.client.user!.username, this.client.user?.displayAvatarURL())
                     .setColor("#00FF00")
                     .setDescription(`:wave: | Hello ${message.author.username}, my prefix is \`${this.client.config.prefix}\``)
                     .setTimestamp()
