@@ -63,13 +63,13 @@ export class CommandManager extends Collection<string, ICommandComponent> {
             if (now < expirationTime) {
                 const timeLeft = (expirationTime - now) / 1000;
                 message.channel.send(`**${message.author.username}**, please wait **${timeLeft.toFixed(1)}** cooldown time.`).then(msg => {
-                    msg.delete({ timeout: 3500 }).catch(e => msg.client.logger.error("PROMISE_ERR:", e));
+                    setTimeout(() => msg.delete(), 3500);
                 }).catch(e => message.client.logger.error("PROMISE_ERR:", e));
                 return undefined;
             }
 
             timestamps.set(message.author.id, now);
-            this.client.setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+            setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
         } else {
             timestamps?.set(message.author.id, now);
             if (this.client.config.devs.includes(message.author.id)) timestamps?.delete(message.author.id);
