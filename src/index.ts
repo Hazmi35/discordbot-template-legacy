@@ -20,4 +20,4 @@ manager.on("shardCreate", shard => {
         log.info(`[ShardManager] Shard #${shard.id} Reconnected.`);
     });
     if (manager.shards.size === manager.totalShards) log.info("[ShardManager] All shards spawned successfully.");
-}).spawn(shardsCount).catch(e => log.error("SHARD_SPAWN_ERR: ", e));
+}).spawn().catch(e => log.error("SHARD_SPAWN_ERR: ", e));
