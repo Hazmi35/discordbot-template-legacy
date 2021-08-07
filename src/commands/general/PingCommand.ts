@@ -1,6 +1,6 @@
 import { BaseCommand } from "../../structures/BaseCommand";
-import { MessageEmbed } from "discord.js";
-import { IMessage } from "../../typings";
+import { ColorResolvable, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { DefineCommand } from "../../utils/decorators/DefineCommand";
 
 @DefineCommand({
@@ -10,13 +10,13 @@ import { DefineCommand } from "../../utils/decorators/DefineCommand";
     usage: "{prefix}ping"
 })
 export class PingCommand extends BaseCommand {
-    public execute(message: IMessage): IMessage {
-        message.channel.send("🏓 Pong!").then((msg: IMessage) => {
+    public execute(message: Message): Message {
+        message.channel.send("🏓 Pong!").then((msg: Message) => {
             const latency = msg.createdTimestamp - message.createdTimestamp;
             const wsLatency = this.client.ws.ping.toFixed(0);
             const embed = new MessageEmbed()
                 .setAuthor("🏓 PONG!", message.client.user?.displayAvatarURL())
-                .setColor(this.searchHex(wsLatency))
+                .setColor(this.searchHex(wsLatency) as ColorResolvable)
                 .addFields({
                     name: "📶 API Latency",
                     value: `**\`${latency}\`** ms`,
@@ -29,7 +29,7 @@ export class PingCommand extends BaseCommand {
                 .setFooter(`Requested by: ${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
                 .setTimestamp();
 
-            msg.edit("", { embed }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
+            msg.edit({ embeds: [embed], content: " " }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
         }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
         return message;
     }
