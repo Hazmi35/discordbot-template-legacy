@@ -1,4 +1,4 @@
-import { Collection, ClientEvents, Client as OClient } from "discord.js";
+import { Collection, ClientEvents, Client as OClient, Message } from "discord.js";
 import { BotClient } from "../structures/BotClient";
 
 export interface IListener {
@@ -18,7 +18,7 @@ export interface ICommandComponent {
         name: string;
         usage?: string;
     };
-    execute(message: IMessage, args: string[]): any;
+    execute(message: Message, args: string[]): any;
 }
 export interface ICategoryMeta {
     name: string;

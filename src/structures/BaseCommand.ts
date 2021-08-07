@@ -1,11 +1,12 @@
-import { ICommandComponent, IMessage } from "../typings";
+import { Message } from "discord.js";
+import { ICommandComponent } from "../typings";
 import { BotClient } from "./BotClient";
 
 export class BaseCommand implements ICommandComponent {
     public constructor(public client: BotClient, public meta: ICommandComponent["meta"]) {}
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-    public execute(message: IMessage, args: string[]): any {}
+    public execute(message: Message, args: string[]): any {}
 
     public reload(): ICommandComponent {
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete

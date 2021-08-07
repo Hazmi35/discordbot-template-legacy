@@ -1,8 +1,8 @@
 import { promises as fs } from "fs";
 import { resolve, parse } from "path";
-import { Collection, Snowflake } from "discord.js";
+import { Collection, Message, Snowflake } from "discord.js";
 import { BotClient } from "../structures/BotClient";
-import { ICommandComponent, ICategoryMeta, IMessage } from "../typings";
+import { ICommandComponent, ICategoryMeta } from "../typings";
 
 export class CommandManager extends Collection<string, ICommandComponent> {
     public readonly categories: Collection<string, ICategoryMeta> = new Collection();
@@ -49,7 +49,7 @@ export class CommandManager extends Collection<string, ICommandComponent> {
     }
 
     // eslint-disable-next-line @typescript-eslint/require-await
-    public async handle(message: IMessage): Promise<any> {
+    public async handle(message: Message): Promise<any> {
         const args = message.content.substring(this.client.config.prefix.length).trim().split(/ +/);
         const cmd = args.shift()?.toLowerCase();
         const command = this.get(cmd!) ?? this.get(this.aliases.get(cmd!)!);
