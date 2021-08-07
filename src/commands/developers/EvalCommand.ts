@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, no-eval */
 import { BaseCommand } from "../../structures/BaseCommand";
-import { MessageEmbed } from "discord.js";
+import { Message, MessageEmbed } from "discord.js";
 import { request } from "https";
-import { IMessage } from "../../typings";
 import { DefineCommand } from "../../utils/decorators/DefineCommand";
 
 @DefineCommand({
@@ -14,7 +13,7 @@ import { DefineCommand } from "../../utils/decorators/DefineCommand";
     usage: "{prefix}eval <some js code>"
 })
 export class EvalCommand extends BaseCommand {
-    public async execute(message: IMessage, args: string[]): Promise<any> {
+    public async execute(message: Message, args: string[]): Promise<any> {
         const msg = message;
         const client = this.client;
 
@@ -28,13 +27,13 @@ export class EvalCommand extends BaseCommand {
             let evaled;
             if (code.includes("--silent") && code.includes("--async")) {
                 code = code.replace("--async", "").replace("--silent", "");
-                await eval(`(async function() {
+                await eval(`(async () => {
                             ${code}
                         })()`);
                 return;
             } else if (code.includes("--async")) {
                 code = code.replace("--async", "");
-                evaled = await eval(`(async function() {
+                evaled = await eval(`(async () => {
                             ${code}
                         })()`);
             } else if (code.includes("--silent")) {
@@ -56,14 +55,14 @@ export class EvalCommand extends BaseCommand {
                 const hastebin = await this.hastebin(output);
                 embed.addField("Output", `${hastebin}.js`);
             } else { embed.addField("Output", `\`\`\`js\n${output}\`\`\``); }
-            message.channel.send(embed).catch(e => this.client.logger.error("PROMISE_ERR:", e));
+            message.channel.send({ embeds: [embed] }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
         } catch (e) {
             const error = this.clean(e);
             if (error.length > 1024) {
                 const hastebin = await this.hastebin(error);
                 embed.addField("Error", `${hastebin}.js`);
             } else { embed.setColor("#FF0000").addField("Error", `\`\`\`js\n${error}\`\`\``); }
-            message.channel.send(embed).catch(e => this.client.logger.error("PROMISE_ERR:", e));
+            message.channel.send({ embeds: [embed] }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
         }
         return message;
     }

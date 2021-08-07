@@ -1,6 +1,5 @@
 import { BaseCommand } from "../../structures/BaseCommand";
-import { MessageEmbed } from "discord.js";
-import { IMessage } from "../../typings";
+import { ColorResolvable, Message, MessageEmbed } from "discord.js";
 import { DefineCommand } from "../../utils/decorators/DefineCommand";
 
 @DefineCommand({
@@ -10,8 +9,8 @@ import { DefineCommand } from "../../utils/decorators/DefineCommand";
     usage: "{prefix}ping"
 })
 export class PingCommand extends BaseCommand {
-    public execute(message: IMessage): IMessage {
-        message.channel.send("🏓 Pong!").then((msg: IMessage) => {
+    public execute(message: Message): Message {
+        message.channel.send("🏓 Pong!").then((msg: Message) => {
             const latency = msg.createdTimestamp - message.createdTimestamp;
             const wsLatency = this.client.ws.ping.toFixed(0);
             const embed = new MessageEmbed()
@@ -29,12 +28,12 @@ export class PingCommand extends BaseCommand {
                 .setFooter(`Requested by: ${message.author.tag}`, message.author.displayAvatarURL({ dynamic: true }))
                 .setTimestamp();
 
-            msg.edit("", { embed }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
+            msg.edit({ embeds: [embed] }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
         }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
         return message;
     }
 
-    private searchHex(ms: string | number): string | number {
+    private searchHex(ms: string | number): ColorResolvable {
         const listColorHex = [
             [0, 20, "#0DFF00"],
             [21, 50, "#0BC700"],
@@ -58,6 +57,6 @@ export class PingCommand extends BaseCommand {
                 ret = defaultColor;
             }
         }
-        return ret;
+        return ret as ColorResolvable;
     }
 }
