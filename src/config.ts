@@ -3,7 +3,7 @@ import { ClientOptions, ClientPresenceStatus, Intents, LimitedCollection, Option
 export const defaultPrefix = "$";
 export const devs: UserResolvable[] = ["290159952784392202"]; // NOTE: Please change this
 export const clientOptions: ClientOptions = {               // https://discord.js.org/#/docs/main/stable/typedef/ClientOptions
-    allowedMentions: { parse: ["users"] },
+    allowedMentions: { parse: ["users"], repliedUser: true },
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS],
     makeCache: Options.cacheWithLimits({
         MessageManager: { // Sweep messages every 5 minutes, removing messages that have not been edited or created in the last 3 hours
