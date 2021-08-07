@@ -1,4 +1,4 @@
-import { Snowflake, Message, TextChannel, DMChannel, NewsChannel, Collection, ClientEvents, Client as OClient } from "discord.js";
+import { Collection, ClientEvents, Client as OClient } from "discord.js";
 import { BotClient } from "../structures/BotClient";
 
 export interface IListener {
@@ -36,56 +36,4 @@ declare module "discord.js" {
 
         public async build(token: string): Promise<BotClient>;
     }
-}
-
-export interface IMessage extends Message {
-    public channel: ITextChannel | IDMChannel | INewsChannel;
-    client: BotClient;
-}
-export interface ITextChannel extends TextChannel {
-    lastMessageID: Snowflake | null;
-    readonly lastMessage: IMessage | null;
-    send(
-        options: MessageOptions | (MessageOptions & { split?: false }) | MessageAdditions | APIMessage,
-    ): Promise<IMessage>;
-    send(
-        options: (MessageOptions & { split: true | SplitOptions; content: StringResolvable }) | APIMessage,
-    ): Promise<IMessage[]>;
-    send(
-        content: StringResolvable,
-        options?: MessageOptions | (MessageOptions & { split?: false }) | MessageAdditions,
-    ): Promise<IMessage>;
-    send(content: StringResolvable, options?: MessageOptions & { split: true | SplitOptions }): Promise<IMessage[]>;
-}
-
-export interface IDMChannel extends DMChannel {
-    lastMessageID: Snowflake | null;
-    readonly lastMessage: IMessage | null;
-    send(
-        options: MessageOptions | (MessageOptions & { split?: false }) | MessageAdditions | APIMessage,
-    ): Promise<IMessage>;
-    send(
-        options: (MessageOptions & { split: true | SplitOptions; content: StringResolvable }) | APIMessage,
-    ): Promise<IMessage[]>;
-    send(
-        content: StringResolvable,
-        options?: MessageOptions | (MessageOptions & { split?: false }) | MessageAdditions,
-    ): Promise<IMessage>;
-    send(content: StringResolvable, options?: MessageOptions & { split: true | SplitOptions }): Promise<IMessage[]>;
-}
-
-export interface INewsChannel extends NewsChannel {
-    lastMessageID: Snowflake | null;
-    readonly lastMessage: IMessage | null;
-    send(
-        options: MessageOptions | (MessageOptions & { split?: false }) | MessageAdditions | APIMessage,
-    ): Promise<IMessage>;
-    send(
-        options: (MessageOptions & { split: true | SplitOptions; content: StringResolvable }) | APIMessage,
-    ): Promise<IMessage[]>;
-    send(
-        content: StringResolvable,
-        options?: MessageOptions | (MessageOptions & { split?: false }) | MessageAdditions,
-    ): Promise<IMessage>;
-    send(content: StringResolvable, options?: MessageOptions & { split: true | SplitOptions }): Promise<IMessage[]>;
 }
