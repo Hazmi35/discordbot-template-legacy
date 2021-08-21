@@ -1,5 +1,5 @@
 import { BaseCommand } from "../../structures/BaseCommand";
-import { exec } from "child_process";
+import { exec, spawn } from "child_process";
 import { DefineCommand } from "../../utils/decorators/DefineCommand";
 import { Message } from "discord.js";
 
@@ -9,30 +9,62 @@ import { Message } from "discord.js";
     description: "Executes bash command",
     devOnly: true,
     name: "exec",
-    usage: "{prefix}exec <bash>"
+    usage: "{prefix}exec [\"logs\"] <bash>"
 })
 export class ExecCommand extends BaseCommand {
     public async execute(message: Message, args: string[]): Promise<any> {
         if (!args[0]) return message.channel.send("Please provide a command to execute!");
 
-        const m: any = await message.channel.send(`❯_ ${args.join(" ")}`);
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        exec(args.join(" "), async (e: any, stdout: any, stderr: any) => {
-            if (e) return m.edit(`\`\`\`js\n${e.message}\`\`\``);
-            if (!stderr && !stdout) return m.edit("Executed without result.");
-            if (stdout) {
-                const pages = this.paginate(stdout, 1950);
+        if (args[0] === "logs") {
+            args.shift();
+
+            if (!args[0]) return message.channel.send("Please provide a command to execute!");
+
+            await message.channel.send(`❯_ ${args.join(" ")} (as Log)`);
+            const ls = spawn(args.shift()!, args, { shell: true, windowsHide: true })
+                .on("spawn", () => {
+                    void message.channel.send("**Log process spawned**");
+                })
+                .on("close", (code, signal) => {
+                    void message.channel.send(`**Log process closed with code ${code!}, signal ${signal!}**`);
+                })
+                .on("error", err => {
+                    void message.channel.send(`**An error occured on the log process**\n\`\`\`${err.message}\`\`\``);
+                });
+
+            ls.stdout.on("data", async data => {
+                const pages = this.paginate(String(data), 1950);
                 for (const page of pages) {
                     await message.channel.send(`\`\`\`\n${page}\`\`\``);
                 }
-            }
-            if (stderr) {
-                const pages = this.paginate(stderr, 1950);
+            });
+
+            ls.stderr.on("data", async data => {
+                const pages = this.paginate(String(data), 1950);
                 for (const page of pages) {
                     await message.channel.send(`\`\`\`\n${page}\`\`\``);
                 }
-            }
-        });
+            });
+        } else {
+            const m = await message.channel.send(`❯_ ${args.join(" ")}`);
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            exec(args.join(" "), async (e: any, stdout: any, stderr: any) => {
+                if (e) return m.edit(`\`\`\`js\n${e.message}\`\`\``);
+                if (!stderr && !stdout) return m.edit("Executed without result.");
+                if (stdout) {
+                    const pages = this.paginate(stdout, 1950);
+                    for (const page of pages) {
+                        await message.channel.send(`\`\`\`\n${page}\`\`\``);
+                    }
+                }
+                if (stderr) {
+                    const pages = this.paginate(stderr, 1950);
+                    for (const page of pages) {
+                        await message.channel.send(`\`\`\`\n${page}\`\`\``);
+                    }
+                }
+            });
+        }
     }
 
     private paginate(text: string, limit = 2000): any[] {
