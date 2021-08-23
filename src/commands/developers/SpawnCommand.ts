@@ -32,14 +32,14 @@ export class SpawnCommand extends BaseCommand {
             await message.reply(`❯_ ${args.join(" ")}`);
             const process = spawn(args.shift()!, args, { shell: true, windowsHide: true })
                 .on("spawn", () => {
-                    void message.channel.send("**Log process spawned**");
+                    void message.channel.send(`**Process ${name} spawned**`);
                 })
                 .on("close", (code, signal) => {
                     this.processes.delete(name);
-                    void message.channel.send(`**Log process closed with code ${code!}, signal ${signal!}**`);
+                    void message.channel.send(`**Process ${name} closed with code ${code!}, signal ${signal!}**`);
                 })
                 .on("error", err => {
-                    void message.channel.send(`**An error occured on the log process**\n\`\`\`${err.message}\`\`\``);
+                    void message.channel.send(`**An error occured on the process ${name}: **\n\`\`\`${err.message}\`\`\``);
                 });
 
             process.stdout.on("data", async data => {
