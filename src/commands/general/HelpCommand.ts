@@ -35,7 +35,7 @@ export class HelpCommand extends BaseCommand {
                 .setThumbnail(message.client.user?.displayAvatarURL() as string)
                 .setTimestamp()
                 .setFooter(`${message.client.config.prefix}help <command> to get more info on a specific command!`, "https://hzmi.xyz/assets/images/390511462361202688.png");
-            for (const category of [...message.client.commands.categories.values()]) {
+            for (const category of message.client.commands.categories.values()) {
                 const isDev = this.client.config.devs.includes(message.author.id); // note: add function to core
                 const cmds = category.cmds.filter(c => isDev ? true : !c.meta.devOnly).map(c => `\`${c.meta.name}\``);
                 if (cmds.length === 0) continue;
