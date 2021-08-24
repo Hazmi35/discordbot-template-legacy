@@ -7,16 +7,10 @@ export class ReadyEvent extends BaseListener {
     public async execute(): Promise<void> {
         this.client.logger.info(this.formatString("{username} is ready to serve {users.size} users on {guilds.size} guilds in " +
         "{textChannels.size} text channels and {voiceChannels.size} voice channels!"));
-        try {
-            this.setPresence(false);
-        } catch (e) {
-            if (e.message !== "Shards are still being spawned.") this.client.logger.error(e);
-        } finally {
-            setInterval(() => this.setPresence(true), this.client.config.presenceData.interval);
-        }
+        this.doPresence();
     }
 
-    public formatString(text: string): string {
+    private formatString(text: string): string {
         return text
             .replace(/{users.size}/g, (this.client.users.cache.size - 1).toString())
             .replace(/{textChannels.size}/g, this.client.channels.cache.filter(ch => ch.type === "GUILD_TEXT").size.toString())
@@ -25,12 +19,22 @@ export class ReadyEvent extends BaseListener {
             .replace(/{voiceChannels.size}/g, this.client.channels.cache.filter(ch => ch.type === "GUILD_VOICE").size.toString());
     }
 
-    public setPresence(random: boolean): Presence {
+    private setPresence(random: boolean): Presence {
         const activity = Math.floor(Math.random() * this.client.config.presenceData.activities.length);
         const status = Math.floor(Math.random() * this.client.config.presenceData.status.length);
         return this.client.user!.setPresence({
             activities: [{ name: this.formatString(this.client.config.presenceData.activities[random ? activity : 0]), type: "PLAYING" }],
             status: this.client.config.presenceData.status[random ? status : 0]
         });
+    }
+
+    private doPresence(): void {
+        try {
+            this.setPresence(false);
+        } catch (e) {
+            if (e.message !== "Shards are still being spawned.") this.client.logger.error(e);
+        } finally {
+            setInterval(() => this.setPresence(true), this.client.config.presenceData.interval);
+        }
     }
 }
