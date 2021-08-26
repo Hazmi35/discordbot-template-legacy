@@ -28,6 +28,7 @@ export interface ICategoryMeta {
 }
 
 declare module "discord.js" {
+    // @ts-expect-error Override typings
     export interface Client extends OClient {
         config: BotClient["config"];
         logger: BotClient["logger"];
@@ -35,6 +36,6 @@ declare module "discord.js" {
         commands: BotClient["commands"];
         events: BotClient["events"];
 
-        public async build(token: string): Promise<this>;
+        build(token: string): Promise<this>;
     }
 }
