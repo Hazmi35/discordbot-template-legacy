@@ -16,7 +16,6 @@ export class ExecCommand extends BaseCommand {
         if (!args[0]) return message.channel.send("Please provide a command to execute!");
 
         const m: any = await message.channel.send(`❯_ ${args.join(" ")}`);
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         exec(args.join(" "), async (e: any, stdout: any, stderr: any) => {
             if (e) return m.edit(`\`\`\`js\n${e.message}\`\`\``);
             if (!stderr && !stdout) return m.edit("Executed without result.");

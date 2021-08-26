@@ -3,6 +3,7 @@ import { BaseCommand } from "../../structures/BaseCommand";
 import { Message, MessageEmbed } from "discord.js";
 import { request } from "https";
 import { DefineCommand } from "../../utils/decorators/DefineCommand";
+import { inspect } from "util";
 
 @DefineCommand({
     aliases: ["ev", "js-exec", "e", "evaluate"],
@@ -44,8 +45,7 @@ export class EvalCommand extends BaseCommand {
                 evaled = await eval(code);
             }
             if (typeof evaled !== "string") {
-                // eslint-disable-next-line @typescript-eslint/no-var-requires
-                evaled = require("util").inspect(evaled, {
+                evaled = inspect(evaled, {
                     depth: 0
                 });
             }

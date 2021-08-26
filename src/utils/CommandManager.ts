@@ -48,7 +48,6 @@ export class CommandManager extends Collection<string, ICommandComponent> {
             .finally(() => this.client.logger.info("All categories has been registered."));
     }
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     public async handle(message: Message): Promise<any> {
         const args = message.content.substring(this.client.config.prefix.length).trim().split(/ +/);
         const cmd = args.shift()?.toLowerCase();
