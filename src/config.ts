@@ -1,4 +1,4 @@
-import { ClientOptions, ClientPresenceStatus, Intents, LimitedCollection, Options, ShardingManagerMode, UserResolvable } from "discord.js";
+import { ActivityType, ClientOptions, ClientPresenceStatus, Intents, LimitedCollection, Options, ShardingManagerMode, UserResolvable } from "discord.js";
 
 export const defaultPrefix = "$";
 export const devs: UserResolvable[] = ["290159952784392202"]; // NOTE: Please change this
@@ -28,13 +28,18 @@ export const clientOptions: ClientOptions = {               // https://discord.j
 export const isProd = process.env.NODE_ENV === "production";
 export const isDev = !isProd;
 export const prefix = isDev ? "d$" : "$";
-export const presenceData = {
+interface IpresenceData {
+    activities: { name: string; type: ActivityType }[];
+    status: ClientPresenceStatus[];
+    interval: number;
+}
+export const presenceData: IpresenceData = {
     activities: [
-        "Hello, World!",
-        "Watching {textChannels.size} of text channels in {guilds.size}",
-        "Listening to {users.size} of users",
-        "Hello there! I am {username}",
-        `My default prefix is ${prefix}`
+        { name: "Hello, World!", type: "PLAYING" },
+        { name: "Watching {textChannels.size} of text channels in {guilds.size} guilds", type: "WATCHING" },
+        { name: "Listening to {users.size} of users", type: "LISTENING" },
+        { name: "Hello there! I am {username}", type: "PLAYING" },
+        { name: `My default prefix is ${prefix}`, type: "PLAYING" }
     ],
     status: ["online"] as ClientPresenceStatus[],
     interval: 60000

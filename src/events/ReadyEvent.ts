@@ -20,11 +20,13 @@ export class ReadyEvent extends BaseEvent {
     }
 
     private setPresence(random: boolean): Presence {
-        const activity = Math.floor(Math.random() * this.client.config.presenceData.activities.length);
-        const status = Math.floor(Math.random() * this.client.config.presenceData.status.length);
+        const activityNumber = random ? Math.floor(Math.random() * this.client.config.presenceData.activities.length) : 0;
+        const statusNumber = random ? Math.floor(Math.random() * this.client.config.presenceData.status.length) : 0;
+        const activity = this.client.config.presenceData.activities.map(a => Object.assign(a, { name: this.formatString(a.name) }))[activityNumber];
+
         return this.client.user!.setPresence({
-            activities: [{ name: this.formatString(this.client.config.presenceData.activities[random ? activity : 0]), type: "PLAYING" }],
-            status: this.client.config.presenceData.status[random ? status : 0]
+            activities: [activity],
+            status: this.client.config.presenceData.status[statusNumber]
         });
     }
 
