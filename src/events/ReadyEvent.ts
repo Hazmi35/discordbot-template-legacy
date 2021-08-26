@@ -5,9 +5,9 @@ import { Presence } from "discord.js";
 @DefineEvent("ready")
 export class ReadyEvent extends BaseEvent {
     public async execute(): Promise<void> {
+        await this.doPresence();
         this.client.logger.info(this.formatString("{username} is ready to serve {users.size} users on {guilds.size} guilds in " +
         "{textChannels.size} text channels and {voiceChannels.size} voice channels!"));
-        this.doPresence();
     }
 
     private formatString(text: string): string {
@@ -28,11 +28,12 @@ export class ReadyEvent extends BaseEvent {
         });
     }
 
-    private doPresence(): void {
+    private async doPresence(): Promise<Presence | undefined> {
         try {
-            this.setPresence(false);
+            return this.setPresence(false);
         } catch (e) {
             if (e.message !== "Shards are still being spawned.") this.client.logger.error(e);
+            return undefined;
         } finally {
             setInterval(() => this.setPresence(true), this.client.config.presenceData.interval);
         }
