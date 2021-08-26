@@ -7,20 +7,20 @@ import * as config from "../config";
 import { CommandManager } from "../utils/CommandManager";
 import { createLogger } from "../utils/Logger";
 import { formatMS } from "../utils/formatMS";
-import { ListenerLoader } from "../utils/ListenerLoader";
+import { EventsLoader } from "../utils/EventsLoader";
 
 export class BotClient extends Client {
     public readonly config = config;
     public readonly logger = createLogger("bot", this.config.isProd);
     public readonly request = got;
     public readonly commands = new CommandManager(this, resolve(__dirname, "..", "commands"));
-    public readonly listeners = new ListenerLoader(this, resolve(__dirname, "..", "listeners"));
+    public readonly events = new EventsLoader(this, resolve(__dirname, "..", "events"));
 
     public constructor(opt: ClientOptions) { super(opt); }
 
     public async build(token: string): Promise<this> {
         const start = Date.now();
-        this.listeners.load();
+        this.events.load();
         this.on("ready", async () => {
             await this.commands.load();
             this.logger.info(`Ready took ${formatMS(Date.now() - start)}`);

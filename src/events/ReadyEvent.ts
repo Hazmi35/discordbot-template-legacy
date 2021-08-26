@@ -1,9 +1,9 @@
-import { DefineListener } from "../utils/decorators/DefineListener";
-import { BaseListener } from "../structures/BaseListener";
+import { DefineEvent } from "../utils/decorators/DefineEvent";
+import { BaseEvent } from "../structures/BaseEvent";
 import { Presence } from "discord.js";
 
-@DefineListener("ready")
-export class ReadyEvent extends BaseListener {
+@DefineEvent("ready")
+export class ReadyEvent extends BaseEvent {
     public async execute(): Promise<void> {
         this.client.logger.info(this.formatString("{username} is ready to serve {users.size} users on {guilds.size} guilds in " +
         "{textChannels.size} text channels and {voiceChannels.size} voice channels!"));

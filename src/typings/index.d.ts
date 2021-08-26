@@ -1,7 +1,7 @@
 import { Collection, ClientEvents, Client as OClient, Message } from "discord.js";
 import { BotClient } from "../structures/BotClient";
 
-export interface IListener {
+export interface IEvent {
     readonly name: keyof ClientEvents;
     execute(...args: any): void;
 }
@@ -33,7 +33,7 @@ declare module "discord.js" {
         logger: BotClient["logger"];
         request: BotClient["request"];
         commands: BotClient["commands"];
-        listeners: BotClient["listeners"];
+        events: BotClient["events"];
 
         public async build(token: string): Promise<this>;
     }
