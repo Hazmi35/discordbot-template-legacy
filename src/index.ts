@@ -1,6 +1,6 @@
 import { ShardingManager } from "discord.js";
 import { resolve } from "path";
-import { isProd, shardsCount } from "./config";
+import { isProd, shardsCount, shardingMode } from "./config";
 import { createLogger } from "./utils/Logger";
 
 const log = createLogger(`shardingmanager`, isProd);
@@ -9,7 +9,7 @@ const manager = new ShardingManager(resolve(__dirname, "bot.js"), {
     totalShards: shardsCount,
     respawn: true,
     token: process.env.DISCORD_TOKEN,
-    mode: "process"
+    mode: shardingMode
 });
 
 manager.on("shardCreate", shard => {

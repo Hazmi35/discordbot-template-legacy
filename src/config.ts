@@ -1,4 +1,4 @@
-import { ClientOptions, ClientPresenceStatus, Intents, LimitedCollection, Options, UserResolvable } from "discord.js";
+import { ClientOptions, ClientPresenceStatus, Intents, LimitedCollection, Options, ShardingManagerMode, UserResolvable } from "discord.js";
 
 export const defaultPrefix = "$";
 export const devs: UserResolvable[] = ["290159952784392202"]; // NOTE: Please change this
@@ -40,3 +40,4 @@ export const presenceData = {
     interval: 60000
 };
 export const shardsCount: number | "auto" = "auto";
+export const shardingMode: ShardingManagerMode = "worker";
