@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 import { resolve, parse } from "path";
-import { Collection, Message, Snowflake } from "discord.js";
+import { Collection, Message, Snowflake, TextChannel } from "discord.js";
 import { BotClient } from "../structures/BotClient";
 import { ICommandComponent, ICategoryMeta } from "../typings";
 
@@ -81,7 +81,10 @@ export class CommandManager extends Collection<string, ICommandComponent> {
         } finally {
             // eslint-disable-next-line no-unsafe-finally
             if (command.meta.devOnly && !this.client.config.devs.includes(message.author.id)) return undefined;
-            this.client.logger.info(`${message.author.tag} [${message.author.id}] is using ${command.meta.name} command from ${command.meta.category!} category`);
+            this.client.logger.info(
+                `${message.author.tag} [${message.author.id}] is using ${command.meta.name} command from ${command.meta.category!} category ` +
+                `on #${(message.channel as TextChannel).name} [${message.channel.id}] in guild: ${message.guild!.name} [${message.guild!.id}]`
+            );
         }
     }
 
