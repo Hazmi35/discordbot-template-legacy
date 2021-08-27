@@ -4,7 +4,9 @@ import { BaseCommand } from "../../structures/BaseCommand";
 import { DefineCommand } from "../../utils/decorators/DefineCommand";
 
 @DefineCommand({
+    cooldown: 0,
     description: "Spawn process for executing bash commands",
+    devOnly: true,
     name: "spawn",
     usage: "{prefix}spawn <option>"
 })
