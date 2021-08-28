@@ -1,6 +1,7 @@
 import { BaseCommand } from "../../structures/BaseCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { DefineCommand } from "../../utils/decorators/DefineCommand";
+import { createEmbed } from "../../utils/createEmbed";
 
 @DefineCommand({
     aliases: ["commands", "cmds", "info"],
@@ -14,7 +15,7 @@ export class HelpCommand extends BaseCommand {
         if (command) {
             message.channel.send({
                 embeds: [
-                    new MessageEmbed()
+                    createEmbed("info")
                         .setTitle(`Help for ${command.meta.name} command`)
                         .setThumbnail("https://hzmi.xyz/assets/images/question_mark.png")
                         .addFields([
@@ -23,18 +24,16 @@ export class HelpCommand extends BaseCommand {
                             { name: "Aliases", value: `${Number(command.meta.aliases?.length) > 0 ? command.meta.aliases?.map(c => `\`${c}\``).join(", ") as string : "None."}`, inline: true },
                             { name: "Usage", value: `\`${command.meta.usage?.replace(/{prefix}/g, message.client.config.prefix) as string}\``, inline: false }
                         ])
-                        .setColor("#00FF00")
-                        .setTimestamp()
                         .setFooter(`<> = required | [] = optional ${command.meta.devOnly ? "(Only my developers can use this command)" : ""}`, "https://hzmi.xyz/assets/images/390511462361202688.png")
+                        .setTimestamp()
                 ]
             }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
         } else { // NOTE: Should we add hide option on commands so we can hide specific commands?
-            const embed = new MessageEmbed()
+            const embed = createEmbed("info")
                 .setTitle("Help Menu")
-                .setColor("#00FF00")
                 .setThumbnail(message.client.user?.displayAvatarURL() as string)
-                .setTimestamp()
-                .setFooter(`${message.client.config.prefix}help <command> to get more info on a specific command!`, "https://hzmi.xyz/assets/images/390511462361202688.png");
+                .setFooter(`${message.client.config.prefix}help <command> to get more info on a specific command!`, "https://hzmi.xyz/assets/images/390511462361202688.png")
+                .setTimestamp();
             for (const category of message.client.commands.categories.values()) {
                 const isDev = this.client.config.devs.includes(message.author.id); // note: add function to core
                 const cmds = category.cmds.filter(c => isDev ? true : !c.meta.devOnly).map(c => `\`${c.meta.name}\``);
