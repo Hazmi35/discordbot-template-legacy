@@ -2,6 +2,7 @@ import { BaseCommand } from "../../structures/BaseCommand";
 import { exec } from "child_process";
 import { DefineCommand } from "../../utils/decorators/DefineCommand";
 import { Message } from "discord.js";
+import { createEmbed } from "../../utils/createEmbed";
 
 @DefineCommand({
     aliases: ["$", "bash", "execute"],
@@ -13,7 +14,7 @@ import { Message } from "discord.js";
 })
 export class ExecCommand extends BaseCommand {
     public async execute(message: Message, args: string[]): Promise<any> {
-        if (!args[0]) return message.channel.send("Please provide a command to execute!");
+        if (!args[0]) return message.reply({ embeds: [createEmbed("error", "Please provide a command to execute!")] });
 
         const m: any = await message.channel.send(`❯_ ${args.join(" ")}`);
         exec(args.join(" "), async (e: any, stdout: any, stderr: any) => {
