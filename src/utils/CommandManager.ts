@@ -3,6 +3,7 @@ import { resolve, parse } from "path";
 import { Collection, Message, Snowflake, TextChannel } from "discord.js";
 import { BotClient } from "../structures/BotClient";
 import { ICommandComponent, ICategoryMeta } from "../typings";
+import { createEmbed } from "./createEmbed";
 
 export class CommandManager extends Collection<string, ICommandComponent> {
     public readonly categories: Collection<string, ICategoryMeta> = new Collection();
@@ -61,7 +62,7 @@ export class CommandManager extends Collection<string, ICommandComponent> {
             const expirationTime = timestamps.get(message.author.id)! + cooldownAmount;
             if (now < expirationTime) {
                 const timeLeft = (expirationTime - now) / 1000;
-                message.channel.send(`**${message.author.username}**, please wait **${timeLeft.toFixed(1)}** cooldown time.`).then(msg => {
+                message.channel.send({ embeds: [createEmbed("error", `**${message.author.username}**, please wait **${timeLeft.toFixed(1)}** cooldown time.`)] }).then(msg => {
                     setTimeout(() => msg.delete(), 3500);
                 }).catch(e => message.client.logger.error("PROMISE_ERR:", e));
                 return undefined;
