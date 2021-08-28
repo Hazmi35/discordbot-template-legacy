@@ -1,6 +1,7 @@
 import { BaseCommand } from "../../structures/BaseCommand";
-import { ColorResolvable, Message, MessageEmbed } from "discord.js";
+import { ColorResolvable, Message } from "discord.js";
 import { DefineCommand } from "../../utils/decorators/DefineCommand";
+import { createEmbed } from "../../utils/createEmbed";
 
 @DefineCommand({
     aliases: ["pong", "peng", "p", "pingpong"],
@@ -10,18 +11,18 @@ import { DefineCommand } from "../../utils/decorators/DefineCommand";
 })
 export class PingCommand extends BaseCommand {
     public execute(message: Message): Message {
-        message.channel.send("🏓 Pong!").then((msg: Message) => {
+        message.channel.send("🏓").then((msg: Message) => {
             const latency = msg.createdTimestamp - message.createdTimestamp;
             const wsLatency = this.client.ws.ping.toFixed(0);
-            const embed = new MessageEmbed()
+            const embed = createEmbed("info")
                 .setAuthor("🏓 PONG!", message.client.user?.displayAvatarURL())
                 .setColor(this.searchHex(wsLatency))
                 .addFields({
-                    name: "📶 API Latency",
+                    name: "📶 **|** API Latency",
                     value: `**\`${latency}\`** ms`,
                     inline: true
                 }, {
-                    name: "🌐 WebSocket Latency",
+                    name: "🌐 **|** WebSocket Latency",
                     value: `**\`${wsLatency}\`** ms`,
                     inline: true
                 })
