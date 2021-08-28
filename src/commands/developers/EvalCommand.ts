@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, no-eval */
 import { BaseCommand } from "../../structures/BaseCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { request } from "https";
 import { DefineCommand } from "../../utils/decorators/DefineCommand";
 import { inspect } from "util";
+import { createEmbed } from "../../utils/createEmbed";
 
 @DefineCommand({
     aliases: ["ev", "js-exec", "e", "evaluate"],
@@ -18,13 +19,12 @@ export class EvalCommand extends BaseCommand {
         const msg = message;
         const client = this.client;
 
-        const embed = new MessageEmbed()
-            .setColor("#00FF00")
+        const embed = createEmbed("info")
             .addField("Input", `\`\`\`js\n${args.join(" ")}\`\`\``);
 
         try {
             let code = args.slice(0).join(" ");
-            if (!code) return message.channel.send("No js code was provided");
+            if (!code) return message.reply({ embeds: [createEmbed("error", "No js code was provided")] });
             let evaled;
             if (code.includes("--silent") && code.includes("--async")) {
                 code = code.replace("--async", "").replace("--silent", "");
