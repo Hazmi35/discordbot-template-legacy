@@ -1,6 +1,7 @@
 import { ChildProcess, spawn } from "child_process";
-import { Collection, Message, MessageEmbed } from "discord.js";
+import { Collection, Message } from "discord.js";
 import { BaseCommand } from "../../structures/BaseCommand";
+import { createEmbed } from "../../utils/createEmbed";
 import { DefineCommand } from "../../utils/decorators/DefineCommand";
 
 @DefineCommand({
@@ -19,29 +20,29 @@ export class SpawnCommand extends BaseCommand {
         if (option === "create") {
             const name = args.shift();
             if (!name) {
-                void message.reply("Please, provide the process name");
+                void message.reply({ embeds: [createEmbed("error", "Please, provide the process name")] });
                 return;
             }
             if (!args.length) {
-                void message.reply("Please, provide a command to execute");
+                void message.reply({ embeds: [createEmbed("error", "Please, provide a command to execute")] });
                 return;
             }
             if (this.processes.has(name)) {
-                void message.reply("There's a running process with that name. Terminate it first, and then try again.");
+                void message.reply({ embeds: [createEmbed("warn", "There's a running process with that name. Terminate it first, and then try again.")] });
                 return;
             }
 
             await message.reply(`❯_ ${args.join(" ")}`);
             const process = spawn(args.shift()!, args, { shell: true, windowsHide: true })
                 .on("spawn", () => {
-                    void message.channel.send(`**Process ${name} spawned**`);
+                    void message.channel.send({ embeds: [createEmbed("success", `**Process ${name} spawned**`)] });
                 })
                 .on("close", (code, signal) => {
                     this.processes.delete(name);
-                    void message.channel.send(`**Process ${name} closed with code ${code!}, signal ${signal!}**`);
+                    void message.channel.send({ embeds: [createEmbed("warn", `**Process ${name} closed with code ${code!}, signal ${signal!}**`)] });
                 })
                 .on("error", err => {
-                    void message.channel.send(`**An error occured on the process ${name}: **\n\`\`\`${err.message}\`\`\``);
+                    void message.channel.send({ embeds: [createEmbed("error", `**An error occured on the process ${name}: **\n\`\`\`${err.message}\`\`\``)] });
                 });
 
             process.stdout.on("data", async data => {
@@ -61,11 +62,11 @@ export class SpawnCommand extends BaseCommand {
         } else if (option === "terminate") {
             const name = args.shift();
             if (!name) {
-                void message.reply("Please, provide the process name");
+                void message.reply({ embeds: [createEmbed("error", "Please, provide the process name")] });
                 return;
             }
             if (!this.processes.has(name)) {
-                void message.reply("There's no process with that name");
+                void message.reply({ embeds: [createEmbed("error", "There's no process with that name")] });
                 return;
             }
 
@@ -74,9 +75,9 @@ export class SpawnCommand extends BaseCommand {
             process?.kill("SIGTERM");
             this.processes.delete(name);
 
-            void message.reply("Process terminated");
+            void message.reply({ embeds: [createEmbed("success", "Process terminated")] });
         } else {
-            const embed = new MessageEmbed().setColor("#FF0000").setDescription("Invalid option. Valid options are `create` and `terminate`");
+            const embed = createEmbed("error", "Invalid option. Valid options are `create` and `terminate`");
 
             void message.reply({ embeds: [embed] });
         }
