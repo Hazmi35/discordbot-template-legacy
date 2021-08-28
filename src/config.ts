@@ -1,4 +1,4 @@
-import { ActivityType, ClientOptions, ClientPresenceStatus, Intents, LimitedCollection, Options, ShardingManagerMode, UserResolvable } from "discord.js";
+import { ActivityType, ClientOptions, ClientPresenceStatus, ColorResolvable, Intents, LimitedCollection, Options, ShardingManagerMode, UserResolvable } from "discord.js";
 
 export const defaultPrefix = "$";
 export const devs: UserResolvable[] = ["290159952784392202"]; // NOTE: Please change this
@@ -28,6 +28,7 @@ export const clientOptions: ClientOptions = {               // https://discord.j
 export const isProd = process.env.NODE_ENV === "production";
 export const isDev = !isProd;
 export const prefix = isDev ? "d$" : "$";
+export const embedColor = "00FF00" as ColorResolvable;
 interface IpresenceData {
     activities: { name: string; type: ActivityType }[];
     status: ClientPresenceStatus[];
