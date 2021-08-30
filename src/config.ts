@@ -37,8 +37,8 @@ interface IpresenceData {
 export const presenceData: IpresenceData = {
     activities: [
         { name: "Hello, World!", type: "PLAYING" },
-        { name: "Watching {textChannels.size} of text channels in {guilds.size} guilds", type: "WATCHING" },
-        { name: "Listening to {users.size} of users", type: "LISTENING" },
+        { name: "{textChannels.size} of text channels in {guilds.size} guilds", type: "WATCHING" },
+        { name: "{users.size} of users", type: "LISTENING" },
         { name: "Hello there! I am {username}", type: "PLAYING" },
         { name: `My default prefix is ${prefix}`, type: "PLAYING" }
     ],
