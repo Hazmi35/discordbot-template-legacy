@@ -33,7 +33,7 @@ export class ReadyEvent extends BaseEvent {
     private async doPresence(): Promise<Presence | undefined> {
         try {
             return this.setPresence(false);
-        } catch (e) {
+        } catch (e: any) {
             if (e.message !== "Shards are still being spawned.") this.client.logger.error(e);
             return undefined;
         } finally {
