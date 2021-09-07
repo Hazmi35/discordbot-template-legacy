@@ -56,7 +56,7 @@ export class EvalCommand extends BaseCommand {
                 embed.addField("Output", `${hastebin}.js`);
             } else { embed.addField("Output", `\`\`\`js\n${output}\`\`\``); }
             message.channel.send({ embeds: [embed] }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
-        } catch (e) {
+        } catch (e: any) {
             const error = this.clean(e);
             if (error.length > 1024) {
                 const hastebin = await this.hastebin(error);
