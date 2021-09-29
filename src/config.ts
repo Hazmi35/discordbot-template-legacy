@@ -31,6 +31,7 @@ export const clientOptions: ClientOptions = {               // https://discord.j
             })
         }
     }),
+    partials: ["CHANNEL", "GUILD_MEMBER", "MESSAGE", "REACTION", "USER"],
     retryLimit: 3
 };
 export const isProd = process.env.NODE_ENV === "production";
