@@ -6,6 +6,7 @@ export const clientOptions: ClientOptions = {               // https://discord.j
     allowedMentions: { parse: ["users"], repliedUser: true },
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS],
     makeCache: Options.cacheWithLimits({
+        ...Options.defaultMakeCacheSettings,
         MessageManager: { // Sweep messages every 5 minutes, removing messages that have not been edited or created in the last 3 hours
             maxSize: Infinity,
             sweepInterval: 300, // 5 Minutes
