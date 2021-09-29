@@ -4,7 +4,14 @@ export const defaultPrefix = "$";
 export const devs: UserResolvable[] = ["290159952784392202"]; // NOTE: Please change this
 export const clientOptions: ClientOptions = {               // https://discord.js.org/#/docs/main/stable/typedef/ClientOptions
     allowedMentions: { parse: ["users"], repliedUser: true },
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS],
+    intents: [ // NOTE: Please change this to only Intents you need, but you can use "Object.values(Intents.FLAGS)" for all Intents
+        Intents.FLAGS.DIRECT_MESSAGES, // NOTE: Privileged Intents (GUILD_MEMBERS & GUILD_PRESENCES) is not included by default with this template
+        Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS
+    ],
     makeCache: Options.cacheWithLimits({
         ...Options.defaultMakeCacheSettings,
         MessageManager: { // Sweep messages every 5 minutes, removing messages that have not been edited or created in the last 3 hours
