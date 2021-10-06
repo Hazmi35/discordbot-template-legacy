@@ -1,4 +1,4 @@
-import { ActivityType, ClientOptions, ClientPresenceStatus, Intents, LimitedCollection, Options, ShardingManagerMode, UserResolvable } from "discord.js";
+import { ActivityOptions, ClientOptions, ClientPresenceStatus, Intents, LimitedCollection, Options, ShardingManagerMode, UserResolvable } from "discord.js";
 
 export const defaultPrefix = "$";
 export const devs: UserResolvable[] = ["290159952784392202"]; // NOTE: Please change this
@@ -38,7 +38,7 @@ export const isProd = process.env.NODE_ENV === "production";
 export const isDev = !isProd;
 export const prefix = isDev ? "d$" : "$";
 interface IpresenceData {
-    activities: { name: string; type: ActivityType }[];
+    activities: ActivityOptions[];
     status: ClientPresenceStatus[];
     interval: number;
 }
