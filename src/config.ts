@@ -36,7 +36,7 @@ export const clientOptions: ClientOptions = {               // https://discord.j
 };
 export const isProd = process.env.NODE_ENV === "production";
 export const isDev = !isProd;
-export const prefix = isDev ? "d$" : "$";
+export const prefix = isDev ? "d$" : defaultPrefix;
 interface IpresenceData {
     activities: ActivityOptions[];
     status: ClientPresenceStatus[];

@@ -1,6 +1,7 @@
 import { BaseCommand } from "../../structures/BaseCommand";
 import { Message, MessageEmbed } from "discord.js";
 import { DefineCommand } from "../../utils/decorators/DefineCommand";
+import { CustomError } from "../../utils/CustomError";
 
 @DefineCommand({
     aliases: ["commands", "cmds", "info"],
@@ -27,7 +28,7 @@ export class HelpCommand extends BaseCommand {
                         .setTimestamp()
                         .setFooter(`<> = required | [] = optional ${command.meta.devOnly ? "(Only my developers can use this command)" : ""}`, "https://hzmi.xyz/assets/images/390511462361202688.png")
                 ]
-            }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
+            }).catch((e: string) => this.client.logger.error(CustomError("PROMISE_ERR:", e)));
         } else { // NOTE: Should we add hide option on commands so we can hide specific commands?
             const embed = new MessageEmbed()
                 .setTitle("Help Menu")
@@ -42,7 +43,7 @@ export class HelpCommand extends BaseCommand {
                 if (category.hide && !isDev) continue; // This hides category that is want to be hided from the meta
                 embed.addField(`**${category.name}**`, cmds.join(", "));
             }
-            message.channel.send({ embeds: [embed] }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
+            message.channel.send({ embeds: [embed] }).catch((e: string) => this.client.logger.error(CustomError("PROMISE_ERR:", e)));
         }
     }
 }
