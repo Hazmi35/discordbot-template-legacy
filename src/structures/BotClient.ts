@@ -11,7 +11,7 @@ import { EventsLoader } from "../utils/EventsLoader";
 
 export class BotClient extends Client {
     public readonly config = config;
-    public readonly logger = createLogger("bot", this.config.isProd);
+    public readonly logger = createLogger("main", "en-US", "shard", this.shard?.ids[0], this.config.isDev);
     public readonly request = got;
     public readonly commands = new CommandManager(this, resolve(__dirname, "..", "commands"));
     public readonly events = new EventsLoader(this, resolve(__dirname, "..", "events"));

@@ -1,6 +1,7 @@
 import { Message, MessageEmbed, User } from "discord.js";
 import { DefineEvent } from "../utils/decorators/DefineEvent";
 import { BaseEvent } from "../structures/BaseEvent";
+import { CustomError } from "../utils/CustomError";
 
 @DefineEvent("messageCreate")
 export class MessageCreateEvent extends BaseEvent {
@@ -18,7 +19,7 @@ export class MessageCreateEvent extends BaseEvent {
                         .setDescription(`:wave: | Hello ${message.author.username}, my prefix is \`${this.client.config.prefix}\``)
                         .setTimestamp()
                 ]
-            }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
+            }).catch((e: string) => this.client.logger.error(CustomError("PROMISE_ERR:", e)));
         }
     }
 

@@ -3,6 +3,7 @@ import { resolve, parse } from "path";
 import { Collection, Message, Snowflake, TextChannel } from "discord.js";
 import { BotClient } from "../structures/BotClient";
 import { ICommandComponent, ICategoryMeta } from "../typings";
+import { CustomError } from "./CustomError";
 
 export class CommandManager extends Collection<string, ICommandComponent> {
     public readonly categories: Collection<string, ICategoryMeta> = new Collection();
@@ -40,11 +41,11 @@ export class CommandManager extends Collection<string, ICommandComponent> {
                             this.client.logger.info(`Done loading ${data.files.length} commands in ${category} category.`);
                             if (data.disabledCount !== 0) this.client.logger.info(`${data.disabledCount} out of ${data.files.length} commands in ${category} category is disabled.`);
                         })
-                        .catch(err => this.client.logger.error("CMD_LOADER_ERR:", err))
+                        .catch((err: string) => this.client.logger.error(CustomError("CMD_LOADER_ERR:", err)))
                         .finally(() => this.client.logger.info(`Done registering ${category} category.`));
                 }
             })
-            .catch(err => this.client.logger.error("CMD_LOADER_ERR:", err))
+            .catch((err: string) => this.client.logger.error(CustomError("CMD_LOADER_ERR:", err)))
             .finally(() => this.client.logger.info("All categories has been registered."));
     }
 
@@ -63,7 +64,7 @@ export class CommandManager extends Collection<string, ICommandComponent> {
                 const timeLeft = (expirationTime - now) / 1000;
                 message.channel.send(`**${message.author.username}**, please wait **${timeLeft.toFixed(1)}** cooldown time.`).then(msg => {
                     setTimeout(() => msg.delete(), 3500);
-                }).catch(e => message.client.logger.error("PROMISE_ERR:", e));
+                }).catch((e: string) => this.client.logger.error(CustomError("PROMISE_ERR:", e)));
                 return undefined;
             }
 
@@ -77,7 +78,7 @@ export class CommandManager extends Collection<string, ICommandComponent> {
             if (command.meta.devOnly && !this.client.config.devs.includes(message.author.id)) return undefined;
             return command.execute(message, args);
         } catch (e) {
-            this.client.logger.error("COMMAND_HANDLER_ERR:", e);
+            this.client.logger.error(CustomError("COMMAND_HANDLER_ERR:", e as string));
         } finally {
             // eslint-disable-next-line no-unsafe-finally
             if (command.meta.devOnly && !this.client.config.devs.includes(message.author.id)) return undefined;
