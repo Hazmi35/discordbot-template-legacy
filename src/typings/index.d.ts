@@ -3,7 +3,7 @@ import { BotClient } from "../structures/BotClient";
 
 export interface IEvent {
     readonly name: keyof ClientEvents;
-    execute(...args: any): void;
+    execute: (...args: any) => void;
 }
 
 export interface ICommandComponent {
@@ -18,7 +18,7 @@ export interface ICommandComponent {
         name: string;
         usage?: string;
     };
-    execute(message: Message, args: string[]): any;
+    execute: (message: Message, args: string[]) => any;
 }
 
 export interface ICategoryMeta {
@@ -36,6 +36,7 @@ declare module "discord.js" {
         commands: BotClient["commands"];
         events: BotClient["events"];
 
+        // eslint-disable-next-line @typescript-eslint/method-signature-style
         build(token: string): Promise<this>;
     }
 }

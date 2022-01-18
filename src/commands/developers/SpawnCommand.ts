@@ -45,13 +45,13 @@ export class SpawnCommand extends BaseCommand {
                 });
 
             process.stdout.on("data", async data => {
-                const pages = this.paginate(String(data), 1950);
+                const pages = SpawnCommand.paginate<string>(String(data), 1950);
                 for (const page of pages) {
                     await message.channel.send(`\`\`\`\n${page}\`\`\``);
                 }
             });
             process.stderr.on("data", async data => {
-                const pages = this.paginate(String(data), 1950);
+                const pages = SpawnCommand.paginate<string>(String(data), 1950);
                 for (const page of pages) {
                     await message.channel.send(`\`\`\`\n${page}\`\`\``);
                 }
@@ -82,7 +82,7 @@ export class SpawnCommand extends BaseCommand {
         }
     }
 
-    private paginate(text: string, limit = 2000): any[] {
+    private static paginate<T>(text: string, limit = 2000): T[] {
         const lines = text.trim().split("\n");
         const pages = [];
         let chunk = "";
@@ -110,6 +110,6 @@ export class SpawnCommand extends BaseCommand {
             pages.push(chunk);
         }
 
-        return pages;
+        return pages as unknown as T[];
     }
 }

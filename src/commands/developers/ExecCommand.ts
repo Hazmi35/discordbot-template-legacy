@@ -15,18 +15,18 @@ export class ExecCommand extends BaseCommand {
     public async execute(message: Message, args: string[]): Promise<any> {
         if (!args[0]) return message.channel.send("Please provide a command to execute!");
 
-        const m: any = await message.channel.send(`❯_ ${args.join(" ")}`);
+        const m: Message = await message.channel.send(`❯_ ${args.join(" ")}`);
         exec(args.join(" "), async (e: any, stdout: any, stderr: any) => {
-            if (e) return m.edit(`\`\`\`js\n${e.message}\`\`\``);
+            if (e) return m.edit(`\`\`\`js\n${(e as Error).message}\`\`\``);
             if (!stderr && !stdout) return m.edit("Executed without result.");
             if (stdout) {
-                const pages = this.paginate(stdout as string, 1950);
+                const pages = ExecCommand.paginate<string>(stdout as string, 1950);
                 for (const page of pages) {
                     await message.channel.send(`\`\`\`\n${page}\`\`\``);
                 }
             }
             if (stderr) {
-                const pages = this.paginate(stderr as string, 1950);
+                const pages = ExecCommand.paginate<string>(stderr as string, 1950);
                 for (const page of pages) {
                     await message.channel.send(`\`\`\`\n${page}\`\`\``);
                 }
@@ -34,7 +34,7 @@ export class ExecCommand extends BaseCommand {
         });
     }
 
-    private paginate(text: string, limit = 2000): any[] {
+    private static paginate<T>(text: string, limit = 2000): T[] {
         const lines = text.trim().split("\n");
         const pages = [];
         let chunk = "";
@@ -62,6 +62,6 @@ export class ExecCommand extends BaseCommand {
             pages.push(chunk);
         }
 
-        return pages;
+        return pages as unknown as T[];
     }
 }
