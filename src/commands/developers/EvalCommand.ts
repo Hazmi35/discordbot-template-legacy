@@ -24,7 +24,7 @@ export class EvalCommand extends BaseCommand {
 
         try {
             let code = args.slice(0).join(" ");
-            if (!code) return message.channel.send("No js code was provided");
+            if (!code) return await message.channel.send("No js code was provided");
             let evaled;
             if (code.includes("--silent") && code.includes("--async")) {
                 code = code.replace("--async", "").replace("--silent", "");
@@ -50,24 +50,24 @@ export class EvalCommand extends BaseCommand {
                 });
             }
 
-            const output = this.clean(evaled);
+            const output = EvalCommand.clean(evaled);
             if (output.length > 1024) {
-                const hastebin = await this.hastebin(output);
+                const hastebin = await EvalCommand.hastebin(output);
                 embed.addField("Output", `${hastebin}.js`);
             } else { embed.addField("Output", `\`\`\`js\n${output}\`\`\``); }
             message.channel.send({ embeds: [embed] }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
         } catch (e: any) {
-            const error = this.clean(e as string);
+            const error = EvalCommand.clean(e as string);
             if (error.length > 1024) {
-                const hastebin = await this.hastebin(error);
+                const hastebin = await EvalCommand.hastebin(error);
                 embed.addField("Error", `${hastebin}.js`);
             } else { embed.setColor("#FF0000").addField("Error", `\`\`\`js\n${error}\`\`\``); }
-            message.channel.send({ embeds: [embed] }).catch(e => this.client.logger.error("PROMISE_ERR:", e));
+            message.channel.send({ embeds: [embed] }).catch(e2 => this.client.logger.error("PROMISE_ERR:", e2));
         }
         return message;
     }
 
-    private clean(text: string): string {
+    private static clean(text: string): string {
         if (typeof text === "string") {
             return text
                 .replace(new RegExp(process.env.DISCORD_TOKEN!, "g"), "[REDACTED]")
@@ -77,17 +77,15 @@ export class EvalCommand extends BaseCommand {
         return text;
     }
 
-    private hastebin(text: any): Promise<string> {
+    private static hastebin(text: any): Promise<string> {
         return new Promise((resolve, reject) => {
             const req = request({ hostname: "bin.hzmi.xyz", path: "/documents", method: "POST", minVersion: "TLSv1.3" }, res => {
                 let raw = "";
                 res.on("data", chunk => raw += chunk);
                 res.on("end", () => {
-                    if (res.statusCode! >= 200 && res.statusCode! < 300) return resolve(`https://bin.hzmi.xyz/${JSON.parse(raw).key}`);
-                    return reject(
-                        new Error(`[hastebin] Error while trying to send data to https://bin.hzmi.xyz/documents,` +
-                        `${res.statusCode?.toString() as string} ${res.statusMessage?.toString() as string}`)
-                    );
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    if (res.statusCode! >= 200 && res.statusCode! < 300) return resolve(`https://bin.hzmi.xyz/${JSON.parse(raw).key as string}`);
+                    return reject(new Error(`[hastebin] Error while trying to send data to https://bin.hzmi.xyz/documents, ${res.statusCode!} ${res.statusMessage!}`));
                 });
             }).on("error", reject);
             req.write(typeof text === "object" ? JSON.stringify(text, null, 2) : text);

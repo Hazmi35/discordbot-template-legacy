@@ -15,7 +15,7 @@ export class ReadyEvent extends BaseEvent {
             .replace(/{users.size}/g, (this.client.users.cache.size - 1).toString())
             .replace(/{textChannels.size}/g, this.client.channels.cache.filter(ch => ch.type === "GUILD_TEXT").size.toString())
             .replace(/{guilds.size}/g, this.client.guilds.cache.size.toString())
-            .replace(/{username}/g, this.client.user?.username as string)
+            .replace(/{username}/g, this.client.user!.username)
             .replace(/{voiceChannels.size}/g, this.client.channels.cache.filter(ch => ch.type === "GUILD_VOICE").size.toString());
     }
 
@@ -30,12 +30,12 @@ export class ReadyEvent extends BaseEvent {
         });
     }
 
-    private async doPresence(): Promise<Presence | undefined> {
+    private doPresence(): Promise<Presence | undefined> {
         try {
-            return this.setPresence(false);
+            return Promise.resolve(this.setPresence(false));
         } catch (e: any) {
-            if (e.message !== "Shards are still being spawned.") this.client.logger.error(e);
-            return undefined;
+            if ((e as Error).message !== "Shards are still being spawned.") this.client.logger.error(e);
+            return Promise.resolve(undefined);
         } finally {
             setInterval(() => this.setPresence(true), this.client.config.presenceData.interval);
         }

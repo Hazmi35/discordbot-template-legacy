@@ -10,7 +10,7 @@ export class EventsLoader {
             .then(async events => {
                 this.client.logger.info(`Loading ${events.length} events...`);
                 for (const file of events) {
-                    const event = await this.import(resolve(this.path, file), this.client);
+                    const event = await EventsLoader.import(resolve(this.path, file), this.client);
                     if (event === undefined) throw new Error(`File ${file} is not a valid event file`);
                     this.client.logger.info(`Events on listener ${event.name.toString()} has been added.`);
                     this.client.on(event.name, (...args) => event.execute(...args));
@@ -20,8 +20,10 @@ export class EventsLoader {
             .finally(() => this.client.logger.info("Done loading events."));
     }
 
-    private async import(path: string, ...args: any[]): Promise<IEvent | undefined> {
-        const file = (await import(resolve(path)).then(m => m[parse(path).name]));
+    private static async import(path: string, ...args: any[]): Promise<IEvent | undefined> {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const file = await import(resolve(path)).then(m => m[parse(path).name]);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         return file ? new file(...args) : undefined;
     }
 }

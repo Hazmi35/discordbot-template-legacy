@@ -13,7 +13,7 @@ export class MessageCreateEvent extends BaseEvent {
             message.channel.send({
                 embeds: [
                     new MessageEmbed()
-                        .setAuthor(this.client.user!.username, this.client.user?.displayAvatarURL())
+                        .setAuthor({ name: this.client.user!.username, iconURL: this.client.user?.displayAvatarURL() })
                         .setColor("#00FF00")
                         .setDescription(`:wave: | Hello ${message.author.username}, my prefix is \`${this.client.config.prefix}\``)
                         .setTimestamp()
@@ -23,7 +23,7 @@ export class MessageCreateEvent extends BaseEvent {
     }
 
     private getUserFromMention(mention: string): Promise<User | undefined> {
-        const matches = /^<@!?(\d+)>$/.exec(mention);
+        const matches = (/^<@!?(?<Snowflake>\d+)>$/).exec(mention);
         if (!matches) return Promise.resolve(undefined);
 
         const id = matches[1];

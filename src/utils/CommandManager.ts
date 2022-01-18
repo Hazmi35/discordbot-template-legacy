@@ -10,8 +10,8 @@ export class CommandManager extends Collection<string, ICommandComponent> {
     private readonly cooldowns: Collection<string, Collection<Snowflake, number>> = new Collection();
     public constructor(public client: BotClient, private readonly path: string) { super(); }
 
-    public load(): void {
-        fs.readdir(resolve(this.path))
+    public load(): Promise<any> {
+        return fs.readdir(resolve(this.path))
             .then(async categories => {
                 this.client.logger.info(`Found ${categories.length} categories, registering...`);
                 for (const category of categories) {
@@ -25,7 +25,7 @@ export class CommandManager extends Collection<string, ICommandComponent> {
                             this.client.logger.info(`Found ${files.length} of commands in ${category}, loading...`);
                             for (const file of files) {
                                 const path = resolve(this.path, category, file);
-                                const command = await this.import(path, this.client, { category, path });
+                                const command = await CommandManager.import(path, this.client, { category, path });
                                 if (command === undefined) throw new Error(`File ${file} is not a valid command file`);
                                 command.meta = Object.assign(command.meta, { path, category });
                                 if (Number(command.meta.aliases?.length) > 0) command.meta.aliases?.forEach(alias => this.aliases.set(alias, command.meta.name));
@@ -36,7 +36,7 @@ export class CommandManager extends Collection<string, ICommandComponent> {
                             return { disabledCount, files };
                         })
                         .then(data => {
-                            this.categories.set(category, Object.assign(meta, { cmds: this.filter(({ meta }) => meta.category === category) }));
+                            this.categories.set(category, Object.assign(meta, { cmds: this.filter(({ meta: m }) => m.category === category) }));
                             this.client.logger.info(`Done loading ${data.files.length} commands in ${category} category.`);
                             if (data.disabledCount !== 0) this.client.logger.info(`${data.disabledCount} out of ${data.files.length} commands in ${category} category is disabled.`);
                         })
@@ -48,7 +48,7 @@ export class CommandManager extends Collection<string, ICommandComponent> {
             .finally(() => this.client.logger.info("All categories has been registered."));
     }
 
-    public async handle(message: Message): Promise<any> {
+    public handle(message: Message): void {
         const args = message.content.substring(this.client.config.prefix.length).trim().split(/ +/);
         const cmd = args.shift()?.toLowerCase();
         const command = this.get(cmd!) ?? this.get(this.aliases.get(cmd!)!);
@@ -88,8 +88,10 @@ export class CommandManager extends Collection<string, ICommandComponent> {
         }
     }
 
-    private async import(path: string, ...args: any[]): Promise<ICommandComponent | undefined> {
-        const file = (await import(resolve(path)).then(m => m[parse(path).name]));
+    private static async import(path: string, ...args: any[]): Promise<ICommandComponent | undefined> {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const file = await import(resolve(path)).then(m => m[parse(path).name]);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         return file ? new file(...args) : undefined;
     }
 }
