@@ -1,48 +1,39 @@
-FROM node:17.0.1-alpine as build-stage
+FROM hazmi35/node:16-dev-alpine as build-stage
 
 # NOTE: Change these as you want
 LABEL name "discordbot-template (build-stage)"
 LABEL maintainer "Hazmi35 <contact@hzmi.xyz>"
 
-WORKDIR /tmp/build
+# Copy package.json and lockfile
+COPY package*.json ./
 
-# Install build tools for node-gyp
-RUN apk add --no-cache build-base git python3
-
-# Copy package.json and package-lock.json
-COPY package.json .
-COPY package-lock.json .
-
-# Install node dependencies
+# Install dependencies
 RUN npm install
 
-# Now copy project files
+# Copy Project files
 COPY . .
 
-# Build typescript project
+# Build TypeScript Project
 RUN npm run build
 
-# Prune dev dependencies
+# Prune devDependencies
 RUN npm prune --production
 
 # Get ready for production
-FROM node:17.0.1-alpine
+FROM hazmi35/node:16-alpine
 
 # NOTE: Change these as you want
 LABEL name "discordbot-template"
 LABEL maintainer "Hazmi35 <contact@hzmi.xyz>"
 
-WORKDIR /app
-
-# Install dependencies
-RUN apk add --no-cache tzdata
-
-# Copy needed project files
+# Copy needed files
 COPY --from=build-stage /tmp/build/package.json .
 COPY --from=build-stage /tmp/build/package-lock.json .
 COPY --from=build-stage /tmp/build/node_modules ./node_modules
 COPY --from=build-stage /tmp/build/dist ./dist
 
-VOLUME [ "/app/logs" ]
+# Mark logs folder as Docker Volume
+VOLUME ["/app/logs"]
 
+# Start the app with node
 CMD ["node", "dist/index.js"]
